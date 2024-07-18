@@ -1,10 +1,11 @@
 import React, { useContext } from 'react';
-import { View, Text, StyleSheet, Alert } from 'react-native';
+import { View, Text, StyleSheet, Alert, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { getFirestore, doc, deleteDoc } from 'firebase/firestore';
 import Button from '../components/ui/Button';
 import { AuthContext } from '../store/auth-store';
 import { formatTime } from '../util/utilfunctions';
+import { Colors } from '../constants/styles';
 
 function AccDetails({ route }) {
   const { run } = route.params;
@@ -29,20 +30,30 @@ function AccDetails({ route }) {
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.header}>Accelerometer Run Details</Text>
-      <Text style={styles.detail}>Date: {formattedDate}</Text>
-      <Text style={styles.detail}>Time: {formattedTime}</Text>
-      <Text style={styles.detail}>Steps: {run.steps}</Text>
-      <Text style={styles.detail}>Distance: {run.distance.toFixed(2)} km</Text>
-      <Text style={styles.detail}>Time Elapsed: {formatTime(run.timeElapsed * 1000)}</Text>
-      <Text style={styles.detail}>Average Speed: {run.averageSpeed.toFixed(2)} km/h</Text>
-      <Text style={styles.detail}>Target Distance: {run.targetDistance.toFixed(2)} km</Text>
-      <Text style={styles.detail}>Target Time: {formatTime(run.targetTime * 1000)}</Text>
-      <Text style={styles.detail}>Goal Achieved: {run.achieved ? 'Yes' : 'No'}</Text>
-      <Text style={styles.detail}> Calories:{run.caloriesBurned}</Text>
-      <Button onPress={onDeleteHandler}  > Delete Run </Button>
-    </View>
+      <View style={styles.container}>
+        <View style={styles.row}>
+          <Text style={styles.text}>Date: {formattedDate}</Text>
+          <Text style={styles.text}>Time: {formattedTime}</Text>
+        </View>
+        <View>
+          <Text style={styles.text}>Time Elapsed: {formatTime(run.timeElapsed * 1000)} </Text>
+          <Text style={styles.text}>Target Distance: {run.targetDistance.toFixed(2)} km</Text>
+          <Text style={styles.text}>Steps: {run.steps}</Text>
+          <Text style={styles.text}>Distance: {run.distance.toFixed(2)} km</Text>
+          <Text style={styles.text}>Average Speed: {run.averageSpeed.toFixed(2)} km/h</Text>
+        <Text style={styles.text}>Target Time: {formatTime(run.targetTime * 1000)}</Text>
+        <Text style={styles.text}>Calories Burned: {run.caloriesBurned}</Text>
+        </View>
+        <Text style={[
+          styles.text,
+          { color: run.achieved ? 'limegreen' : 'red',
+            fontSize:25,
+           }
+        ]}>Goal Achieved: {run.achieved ? 'Yes' : 'No'}</Text>
+        <View style={styles.buttonRow}>
+          <Button onPress={onDeleteHandler}>Delete Run</Button>
+        </View>
+      </View>
   );
 }
 
@@ -50,18 +61,29 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    justifyContent: 'flex-start',
-    alignItems: 'flex-start',
+    // justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#0F0F0F',
   },
-  header: {
-    fontSize: 24,
-    marginBottom: 16,
-    fontWeight: 'bold',
+  text: {
+    fontSize: 20,
+    fontFamily: 'RobotoCondensed_400Regular',
+    color: 'white',
+    marginHorizontal: 10,
+    marginVertical: 10,
   },
-  detail: {
-    fontSize: 18,
-    marginBottom: 8,
-  }
+  buttonRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    width: '80%',
+    marginVertical: 20,
+  },
+  row: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+    marginVertical: 10,
+  },
 });
 
 export default AccDetails;

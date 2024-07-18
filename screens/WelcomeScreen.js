@@ -5,17 +5,19 @@ import { Colors } from '../constants/styles';
 import { getFirestore, doc, onSnapshot } from "firebase/firestore";
 import Button from '../components/ui/Button';
 import { UserContext } from '../store/userdata-store';
-
+import { RobotoCondensed_400Regular, useFonts, RobotoCondensed_700Bold } from '@expo-google-fonts/roboto-condensed';
 function WelcomeScreen({ navigation }) {
     const authCtx = useContext(AuthContext);
     const [userData, setUserData] = useState(null);
     const userContext = useContext(UserContext);
 
+    let [fontsLoaded, fontError] = useFonts({
+        RobotoCondensed_400Regular,
+        RobotoCondensed_700Bold,
+      });
     useEffect(() => {
         const db = getFirestore();
         const docRef = doc(db, "users", authCtx.token);
-
-        // Listen for real-time updates
         const unsubscribe = onSnapshot(docRef, (doc) => {
             if (doc.exists()) {
                 const data = doc.data();
@@ -30,7 +32,7 @@ function WelcomeScreen({ navigation }) {
             console.error("Error listening to the document: ", error);
         });
 
-        // Clean up the listener when the component unmounts
+       
         return () => unsubscribe();
     }, [authCtx.token]);
 
@@ -38,21 +40,22 @@ function WelcomeScreen({ navigation }) {
         navigation.navigate('UpdateProfile', { userData });
     }
 
-    console.log(userContext.weight);
+
 
     return (
         <View style={styles.rootContainer}>
             <Text style={styles.title}>Welcome {userData ? userData.name : 'User'}</Text>
             {userData && (
                 <View>
-                    <Text>Name: {userData.name}</Text>
-                    <Text>Weight: {userData.weight} kg</Text>
-                    <Text>Height: {userData.height} cm</Text>
-                    <Text>Age: {userData.age} years</Text>
+                    <Text style={styles.text}>Name: {userData.name}</Text>
+                    <Text style={styles.text}>Weight: {userData.weight} kg</Text>
+                    <Text style={styles.text}>Height: {userData.height} cm</Text>
+                    <Text style={styles.text}>Age: {userData.age} years</Text>
                 </View>
             )}
+            <View style={styles.buttonContainer}>
             <Button onPress={onPress}>Change Profile</Button>
-            <Text>You authenticated successfully!</Text>
+            </View>
         </View>
     );
 }
@@ -65,11 +68,27 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         padding: 32,
-        backgroundColor: Colors.primary500
+        backgroundColor: Colors.primary800,
     },
     title: {
-        fontSize: 20,
+        fontSize: 28,
         fontWeight: 'bold',
         marginBottom: 8,
+        color:'white',
+        borderBottomColor:"white",
+        borderBottomWidth:1,
+        fontFamily:'RobotoCondensed_700Bold',
+    },
+    text:{
+        fontSize: 18,
+        marginVertical: 12,
+        color:'white',
+        fontFamily:'RobotoCondensed_700Bold',
+    },
+    buttonContainer: {
+        marginTop: 80,
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '100%',
     },
 });

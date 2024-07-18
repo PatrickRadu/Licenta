@@ -1,11 +1,11 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { View, Text } from 'react-native';
+import { View, Text,StyleSheet } from 'react-native';
 import Button from '../components/ui/Button';
 import { getFirestore, query, collection, onSnapshot, orderBy } from 'firebase/firestore';
 import { AuthContext } from '../store/auth-store';
 import GpsRunList from '../components/Run/gpsRunList';
 import AccRunList from '../components/Run/accRunList'; // Make sure this is imported
-
+import { Colors } from '../constants/styles';
 function RunHistoryScreen({ navigation }) {
   const authCtx = useContext(AuthContext);
   const [runs, setRuns] = useState([]);
@@ -54,17 +54,41 @@ function RunHistoryScreen({ navigation }) {
   }
 
   return (
-    <View>
-      <Button onPress={onPressHandler}>Start Run</Button>
-      <View style={{flexDirection:'row',alignContent:'center'}}>
-      <Button onPress={onPressHandler2}>See ACC List</Button>
-      <Button onPress={onPressHandler3}>See GPS List</Button>
+    <View style={styles.container}>
+      <Button onPress={onPressHandler} style={{backgroundColor:'#069425'}}>Start Run</Button>
+      <View style={styles.buttonRow}>
+        <Button onPress={onPressHandler2}> ACC List</Button>
+        <Button onPress={onPressHandler3}> GPS List</Button>
       </View>
-      <View>
-      {isAccRuns ? <AccRunList runs={accRuns} /> : <GpsRunList runs={runs} />}
+      <View style={styles.listContainer}>
+        {isAccRuns ? <AccRunList runs={accRuns} /> : <GpsRunList runs={runs} />}
       </View>
     </View>
   );
 }
 
 export default RunHistoryScreen;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    paddingHorizontal:12,
+    backgroundColor: Colors.primary800,
+  },
+  buttonRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    marginVertical: 16,
+  },
+  listContainer: {
+    flex: 1,
+    marginTop: 16,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: 'white',
+    padding: 8,
+    borderRadius: 12,
+    paddingBottom:2,
+  },
+});

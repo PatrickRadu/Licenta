@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
 import { View, Text, Alert, StyleSheet } from "react-native";
 import Button from "../components/ui/Button";
 import { formatTime, getDistance } from "../util/utilfunctions";
 import * as Location from "expo-location";
+import { useFonts, RobotoCondensed_400Regular, RobotoCondensed_700Bold } from '@expo-google-fonts/roboto-condensed';
 
 function Run({ navigation,route }) {
+
 
   const [secondsElapsed, setSecondsElapsed] = useState(0);
   const [timerActive, setTimerActive] = useState(false);
@@ -18,6 +20,11 @@ function Run({ navigation,route }) {
   const targetTime = route.params?.targetTime * 1000 || 0;
   const targetAvgSpeed = targetDistance / (targetTime / 3600000);
 
+  let [fontsLoaded] = useFonts({
+    RobotoCondensed_400Regular,
+    RobotoCondensed_700Bold,
+  });
+
   useEffect(() => {
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
@@ -27,6 +34,12 @@ function Run({ navigation,route }) {
       }
     })();
   }, []);
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerShown: !timerActive,
+    });
+  }, [navigation, timerActive]);
 
   useEffect(() => {
     let interval;
@@ -73,26 +86,54 @@ function Run({ navigation,route }) {
   }, [timerActive]);
 
   useEffect(() => {
-    if(secondsElapsed*1000>=targetTime && totalDistance>=targetDistance && (targetTime>0 || targetDistance>0)){
+    if (targetTime > 0 && targetDistance > 0) {
+      if (secondsElapsed * 1000 <= targetTime && totalDistance >= targetDistance) {
+       
+        setAchieved(true);
+      }
+    } else if (targetTime > 0) {
+      if (secondsElapsed * 1000 >= targetTime) {
+      
+        setAchieved(true);
+      }
+    } else if (targetDistance > 0) {
+      if (parseFloat(totalDistance) >= parseFloat(targetDistance)) {
+        setAchieved(true);
+      }
+    } else {
+
       setAchieved(true);
     }
-
-  },[secondsElapsed,totalDistance]);
-
+  }, [secondsElapsed, totalDistance]);
+  
+  
+  
+ 
+ 
   useEffect(() => {
-    const averageSpeedSoFar = (totalDistance / (secondsElapsed / 3600)); 
-    if (averageSpeedSoFar >= targetAvgSpeed && (targetTime > 0 && targetDistance > 0) && (targetTime>=secondsElapsed*1000 && targetDistance>=totalDistance) ) {
+    const averageSpeedSoFar = (totalDistance / (secondsElapsed / 3600));
+
+    if (achieved) {
       setAchieving(true);
-    } else if (targetTime>=secondsElapsed*1000 && targetDistance>=totalDistance && (targetTime > 0 && targetDistance > 0))  {
+    } else if (averageSpeedSoFar >= targetAvgSpeed && targetTime > 0 && targetDistance > 0) {
+      setAchieving(true);
+    } else if (averageSpeedSoFar < targetAvgSpeed && targetTime > 0 && targetDistance > 0) {
       setAchieving(false);
     }
-  }, [totalDistance, secondsElapsed, targetAvgSpeed]);
+    else
+    {
+      setAchieving(achieved)
+    }
+    if (secondsElapsed * 1000 > targetTime && !achieved) {
+      setAchieving(false);
+    }
+  }, [totalDistance, secondsElapsed]);
 
   function onStartHandler() {
     setTimerActive(true);
-    setRoutes([]); // Reset the route and distance when starting a new run
+    setRoutes([]); 
     setTotalDistance(0);
-    setCurrentSpeed(0); // Reset speed when starting a new run
+    setCurrentSpeed(0); 
   }
 
   function onPressEndHandler() {
@@ -101,21 +142,70 @@ function Run({ navigation,route }) {
   }
  
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center',backgroundColor:achieving? "green" : "red" }}>
-      <Button onPress={onStartHandler}>Start Run</Button>
-      <Button onPress={onPressEndHandler}>End Run</Button>
-      <Text style={{ fontSize: 24, marginTop: 20 }}>
-        Time: {formatTime(secondsElapsed * 1000)}
+    <View style={[styles.container, { backgroundColor: achieving ? "green" : "red" }]}>
+      <View style={styles.timerContainer}>
+      <Text style={styles.timerText}>
+        {formatTime(secondsElapsed * 1000)}
       </Text>
-      <Text style={{ fontSize: 20 }}>
+      </View>
+      <View style={styles.infoContainer}>
+      <Text style={styles.infoText}>
         Distance: {totalDistance.toFixed(2)} km
       </Text>
-      <Text style={{ fontSize: 20 }}>
+      <Text style={styles.infoText}>
         Current Speed: {currentSpeed.toFixed(2)} km/h
       </Text>
-      <Text>You are {achieving? "Good" : "Not Good"}</Text>
+       {/* <Text style={styles.infoText}>You are {achieved? "Good" : "Not Good"}</Text> */}
+       {achieved && <Text style={styles.infoText}> You achieved your Goal!</Text>}
+      {!timerActive && <Button onPress={onStartHandler}>Start Run</Button>}
+      {timerActive && <Button onPress={onPressEndHandler}>End Run</Button>}
+      </View>
     </View>
   );
 }
+const styles = StyleSheet.create({
+  container:
+  {
+    flex: 1,
+    justifyContent: 'center', 
+    alignItems: 'center',
+  },
+  timerContainer:
+  {
+    borderColor: "white",
+    borderWidth: 4,
+    borderRadius: 150,
+    width: 250,
+    height: 250,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  timerText:
+  {
+    fontSize: 60,
+    color: "white",
+    fontWeight: 'bold',
+    fontFamily:"RobotoCondensed_700Bold"
+  },
+  infoContainer:
+  {
+    marginTop:30,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  buttonContainer:
+  {
+    marginBottom: 100,
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+  },
+  infoText:
+  {
+    fontSize:24,
+    color:"white",
+    fontFamily:"RobotoCondensed_400Regular"
+  }
+})
 
 export default Run;

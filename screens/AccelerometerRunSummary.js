@@ -55,7 +55,7 @@ function AccelerometerRunSummary({ route, navigation }) {
     <View style={styles.container}>
       <Text style={styles.title}>Run Summary</Text>
       <View style={styles.columnContainer}>
-      <Text style={styles.congratulationText}>{achieved ? 'Goal Achieved' : 'Goal Not Achieved'}</Text>
+      <Text style={[styles.congratulationText,!achieved && {color:'red'}]}>{achieved ? 'Goal Achieved' : 'Goal Not Achieved'}</Text>
         <Text style={styles.text}>Time: {formatTime(timeElapsed*1000)}</Text>
         <Text style={styles.text}>Steps: {steps}</Text>
         <Text style={styles.text}>Distance: {distance.toFixed(3)} km</Text>
@@ -66,7 +66,7 @@ function AccelerometerRunSummary({ route, navigation }) {
         <Text style={styles.text}>Calories Burned: {caloriesBurned.toFixed(2)} cal</Text>
       </View>
       <Button onPress={onSave}>Save</Button>
-      <Button onPress={() => navigation.navigate('Home')}>Delete Run</Button>
+      <Button onPress={() => navigation.navigate('History')}>Delete Run</Button>
     </View>
   );
 }

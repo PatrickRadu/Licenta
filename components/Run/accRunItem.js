@@ -1,26 +1,60 @@
-import { View,Text,Pressable } from "react-native";
-import{ useNavigation } from "@react-navigation/native";
-function AccRunItem({run})
-{
-    const navigation = useNavigation();
-    const formattedDate = new Date(run.timestamp.seconds * 1000).toLocaleDateString("en-US");
-    const formattedTime = new Date(run.timestamp.seconds * 1000).toLocaleTimeString("en-US");
-    function onPress()
-    {
-        navigation.navigate('AccDetails',{run});
-    }
-    return(
-        <Pressable onPress={onPress}>
-        <View>
-        <Text>run.id: {run.id}</Text>
-        <Text>Date: {formattedDate} Time: {formattedTime}</Text>
-        <Text>Steps: {run.steps}</Text> 
-        <Text>Distance: {run.distance.toFixed(2)} km</Text>
-        <Text>Average Speed: {run.averageSpeed.toFixed(2)} km/h</Text>
-        <Text>Goal Achieved: {run.achieved ? 'Yes' : 'No'}</Text>
-        <Text>Calories: {run.caloriesBurned}</Text>
+import React from 'react';
+import { View, Text, StyleSheet, Pressable } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { Colors } from '../../constants/styles';
+import { RobotoCondensed_400Regular, useFonts, RobotoCondensed_700Bold } from '@expo-google-fonts/roboto-condensed';
+
+function AccRunItem({ run }) {
+  let [fontsLoaded, fontError] = useFonts({
+    RobotoCondensed_400Regular,
+    RobotoCondensed_700Bold,
+  });
+
+  const navigation = useNavigation();
+  const formattedDate = new Date(run.timestamp.seconds * 1000).toLocaleDateString("en-US");
+  const formattedTime = new Date(run.timestamp.seconds * 1000).toLocaleTimeString("en-US");
+
+  function onPress() {
+    navigation.navigate('AccDetails', { run });
+  }
+
+  return (
+    <Pressable onPress={onPress}>
+      <View style={styles.container}>
+        <View style={styles.row}>
+          <Text style={styles.text}>Date: {formattedDate} </Text>
+          <Text style={styles.text}>Time: {formattedTime}</Text>
         </View>
-        </Pressable>
-    );
+        <View style={styles.row}>
+        <Text style={styles.text}>Distance: {run.distance.toFixed(2)} km</Text>
+        <Text style={styles.text}>Average Speed: {run.averageSpeed.toFixed(2)} km/h</Text>
+        </View>
+        <Text style={styles.text}>Steps: {run.steps}</Text>
+        <Text style={[
+          styles.text,
+          { color: run.achieved ? 'limegreen' : 'red' }
+        ]}>Goal Achieved: {run.achieved ? 'Yes' : 'No'}</Text>
+      </View>
+    </Pressable>
+  );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+    backgroundColor: Colors.primary800,
+  },
+  row: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 5,
+  },
+  text: {
+    color: 'white',
+    fontFamily: 'RobotoCondensed_400Regular',
+  },
+});
+
 export default AccRunItem;

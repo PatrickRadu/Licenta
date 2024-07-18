@@ -37,7 +37,7 @@ function RunSummary({ navigation, route }) {
       averageSpeed: averageSpeed,
       caloriesBurned: caloriesBurned,
       routes: routes,
-      achieved: achieved && achieving,
+      achieved: achieved,
       targetDistance: targetDistance,
       targetTime: targetTime,
       timestamp: new Date()
@@ -60,13 +60,13 @@ function RunSummary({ navigation, route }) {
       <Text style={styles.title}>Run Summary</Text>
       <View style={styles.row}>
         <Text style={styles.text}>Total Distance: {totalDistance.toFixed(2)} km</Text>
-        {targetDistance > 0 && <Text style={styles.text}>Target Distance: {targetDistance} km</Text>}
+        <Text style={styles.text}>Target Distance: {targetDistance} km</Text>
       </View>
       <View style={styles.row}>
         <Text style={styles.text}>Time Elapsed: {formatTime(timeElapsed)}</Text>
-        {targetTime > 0 && <Text style={styles.text}>Target Time: {formatTime(targetTime)}</Text>}
+         <Text style={styles.text}>Target Time: {formatTime(targetTime)}</Text>
       </View>
-      {achieved && achieving && <Text style={styles.congratsText}>Congratulations! Target Achieved!</Text>}
+      {achieved && <Text style={styles.congratsText}>Congratulations! Target Achieved!</Text>}
       {!achieved && <Text style={styles.failedText}>Goal Not Achieved</Text>}
       <View style={styles.columnContainer}>
         <Text style={styles.text}>Average Speed: {averageSpeed.toFixed(2)} km/h</Text>
@@ -88,7 +88,7 @@ function RunSummary({ navigation, route }) {
       </View>
       <View style={styles.buttonRow}>
         <Button onPress={onPressHandler}>Save Run</Button>
-        <Button onPress={() => navigation.navigate("Home")}>Delete Run</Button>
+        <Button onPress={() => navigation.navigate("History")}>Delete Run</Button>
       </View>
     </View>
   );

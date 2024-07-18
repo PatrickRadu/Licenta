@@ -34,21 +34,18 @@ function BottomTab()
       headerStyle: { backgroundColor: Colors.primary800 },
       headerTintColor: "white",
       contentStyle: { backgroundColor: Colors.primary500},
-      tabBarStyle: { backgroundColor: Colors.primary800 },
+      tabBarStyle: { 
+        backgroundColor: Colors.primary800,
+        borderTopColor:'white',
+        borderTopWidth: 1,
+       },
       tabBarActiveTintColor: Colors.primary500,
     }}>
       <Bottom.Screen name="ProfileManager" component={ProfileNavigation}  options={{
-          headerRight: ({ tintColor }) => (
-            <IconButton
-              icon="exit"
-              color="red"
-              onPress={authCtx.logout}
-              size={24}
-            />),
+        headerShown:false,
             tabBarIcon: ({ color }) => (<Ionicons name="person" size={24} color={color} />)
       }}/>
       <Bottom.Screen name="History" component={RunHistoryScreen} options={{
-        headerShown:false,
         tabBarIcon: ({ color }) => (<Ionicons name="earth" size={24} color={color} />)
       }}/>
       </Bottom.Navigator>
@@ -59,12 +56,17 @@ function Running()
 {
   return(
     <Stack.Navigator screenOptions={{
-      headerStyle: { backgroundColor: Colors.primary800 },
+      headerStyle: { 
+        backgroundColor: Colors.primary800,
+       },
       headerTintColor: "white",
       contentStyle: { backgroundColor: Colors.primary500 },
-    
     }}>
-      <Stack.Screen name="Main" component={BottomTab}/>
+      <Stack.Screen name="Main" component={BottomTab} options={
+        {
+          headerShown:false,
+        }
+      }/>
       <Stack.Screen name="Run" component={Run} />
       <Stack.Screen name="Summary" component={RunSummary} options={{
         headerLeft:()=>null,
@@ -91,7 +93,15 @@ function ProfileNavigation()
       contentStyle: { backgroundColor: Colors.primary500 },
     
     }}>
-      <Stack.Screen name="Profile" component={WelcomeScreen}/>
+      <Stack.Screen name="Profile" component={WelcomeScreen} options={{
+         headerRight: ({ tintColor }) => (
+          <IconButton
+            icon="exit"
+            color="red"
+            onPress={authCtx.logout}
+            size={24}
+          />),
+      }}/>
       <Stack.Screen name="UpdateProfile" component={UpdateProfile}/>
     </Stack.Navigator>
   )

@@ -2,7 +2,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { Colors } from '../../constants/styles';
 import { useFonts, RobotoCondensed_700Bold } from '@expo-google-fonts/roboto-condensed';
-function Button({ children, onPress }) {
+function Button({ children, onPress, style }) {
   let [fontsLoaded, fontError] = useFonts({
     RobotoCondensed_700Bold,
   });
@@ -11,6 +11,7 @@ function Button({ children, onPress }) {
       style={({ pressed }) => [
         styles.button,
         pressed && styles.pressed,
+        style
       ]}
       onPress={onPress}
     >
@@ -25,29 +26,28 @@ export default Button;
 
 const styles = StyleSheet.create({
   button: {
-    borderRadius: 10, // Slightly larger radius for a smoother look
-    paddingVertical: 12, // Increased padding for a more substantial button
-    paddingHorizontal: 20, // Increased padding for better touch targets
-    backgroundColor: '#444', // Dark background to match the screen's theme
-    elevation: 2, // Increased elevation for a more pronounced shadow effect
+    borderRadius: 10, 
+    paddingVertical: 12, 
+    paddingHorizontal: 20, 
+    backgroundColor: '#444', 
+    elevation: 2, 
     shadowColor: '#444',
-    shadowOffset: { width: 1, height: 1 }, // Larger offset for a more noticeable shadow
-    shadowOpacity: 0.5, // Higher opacity for a stronger shadow
+    shadowOffset: { width: 1, height: 1 }, 
+    shadowOpacity: 0.5, 
     shadowRadius: 4,
-    marginTop: 20, // Added margin to provide space above the button
+    marginTop: 20,
   },
   pressed: {
-    opacity: 0.8, // Slight opacity change when pressed
+    opacity: 0.8, 
   },
   innerContainer: {
-    alignItems: 'center', // Center the text inside the button
+    alignItems: 'center', 
     justifyContent: 'center',
   },
   buttonText: {
     textAlign: 'center',
-    color: '#ffffff', // White text for high contrast
-    fontSize: 18, // Slightly larger font for better readability
-    fontWeight: 'bold',
-    fontFamily: 'RobotoCondensed_700Bold', // Use the custom font for the button text
+    color: '#ffffff', 
+    fontSize: 18, 
+    fontFamily: 'RobotoCondensed_700Bold', 
   },
 });
